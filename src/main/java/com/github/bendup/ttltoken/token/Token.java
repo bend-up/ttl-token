@@ -11,23 +11,29 @@ public class Token {
 
     @PrimaryKey
     private UUID id;
-
-
     private String url;
 
-    public Token() {
-    }
-
-    public Token(String url) {
-        setId(UUID.randomUUID());
-        setUrl(url);
+    public static Token fromUrl(String url) {
+        Token token = new Token();
+        token.setId(UUID.randomUUID());
+        token.setUrl(url);
+        return token;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public String toString() {
+        return "Token [id=" + id + ", url=" + url + "]";
+    }
+
+    void setId(UUID id) {
         if (id != null) {
             this.id = id;
         } else {
@@ -35,11 +41,7 @@ public class Token {
         }
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
+    void setUrl(String url) {
         if (UrlValidator.getInstance().isValid(url)) {
             this.url = url;
         } else {
@@ -47,8 +49,4 @@ public class Token {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Token [id=" + id + ", url=" + url + "]";
-    }
 }

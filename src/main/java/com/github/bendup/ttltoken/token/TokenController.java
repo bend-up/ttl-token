@@ -23,7 +23,7 @@ public class TokenController {
     @PostMapping("/generateToken")
     public Mono<UUID> createToken(@RequestParam("url") String url) {
         return tokenRepository
-                .save(new Token(url))
+                .save(Token.fromUrl(url))
                 .map(savedToken -> savedToken.getId());
     }
 
