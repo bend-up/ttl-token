@@ -1,10 +1,16 @@
-package com.github.bendup.ttltoken.cassandra;
+package com.github.bendup.ttltoken.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractReactiveCassandraConfiguration;
 import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
+import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
 import org.springframework.data.cassandra.repository.config.EnableReactiveCassandraRepositories;
+
+import java.util.Arrays;
+import java.util.List;
+
 
 @Configuration
 @EnableReactiveCassandraRepositories
@@ -26,6 +32,16 @@ public class CassandraConfig extends AbstractReactiveCassandraConfiguration {
 
     @Override protected int getPort() {
         return port;
+    }
+
+    @Override
+    protected List<CreateKeyspaceSpecification> getKeyspaceCreations() {
+        final CreateKeyspaceSpecification specification =
+                CreateKeyspaceSpecification.createKeyspace(keyspace)
+                        .ifNotExists()
+                        .with(KeyspaceOption.DURABLE_WRITES, true)
+                        .withSimpleReplication();
+        return Arrays.asList(specification);
     }
 
     @Override public SchemaAction getSchemaAction() {
