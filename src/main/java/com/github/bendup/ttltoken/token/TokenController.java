@@ -1,7 +1,10 @@
 package com.github.bendup.ttltoken.token;
 
 import java.util.UUID;
+
+import com.github.bendup.ttltoken.token.repository.TtlReactiveTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +21,15 @@ import reactor.core.publisher.Mono;
 public class TokenController {
 
     @Autowired
-    TokenRepository tokenRepository;
+    TtlReactiveTokenRepository tokenRepository;
+
+    @Value("${token.ttl}")
+    private Integer ttl;
 
     @PostMapping("/generateToken")
     public Mono<UUID> createToken(@RequestParam("url") String url) {
         return tokenRepository
-                .save(Token.fromUrl(url))
+                .saveWithTtl(Token.fromUrl(url), ttl)
                 .map(savedToken -> savedToken.getId());
     }
 
