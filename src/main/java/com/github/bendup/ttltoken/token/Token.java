@@ -13,6 +13,8 @@ public class Token {
     private UUID id;
     private String url;
 
+    private Token() {}
+
     public static Token fromUrl(String url) {
         Token token = new Token();
         token.setId(UUID.randomUUID());
@@ -33,19 +35,19 @@ public class Token {
         return "Token [id=" + id + ", url=" + url + "]";
     }
 
-    void setId(UUID id) {
+    private void setId(UUID id) {
         if (id != null) {
             this.id = id;
         } else {
-            throw new IllegalStateException("Invalid id");
+            throw new IllegalArgumentException("Invalid id");
         }
     }
 
-    void setUrl(String url) {
+    private void setUrl(String url) {
         if (UrlValidator.getInstance().isValid(url)) {
             this.url = url;
         } else {
-            throw new IllegalStateException("Invalid url");
+            throw new IllegalArgumentException("Invalid url");
         }
     }
 
