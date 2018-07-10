@@ -4,8 +4,6 @@ import com.github.bendup.ttltoken.token.Token;
 import com.github.bendup.ttltoken.token.repository.ReactiveTokenRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.cassandra.core.InsertOptions;
 import org.springframework.data.cassandra.core.ReactiveCassandraOperations;
@@ -22,15 +20,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
 public class CassandraTtlReactiveTokenRepositoryTests {
 
-    @Autowired
-    private CassandraTtlReactiveTokenRepository cassandraTtlReactiveTokenRepository;
     @MockBean
     private ReactiveCassandraOperations reactiveCassandraOperations;
     @MockBean
     private ReactiveTokenRepository reactiveTokenRepository;
+
+    private CassandraTtlReactiveTokenRepository cassandraTtlReactiveTokenRepository;
 
     final String url = "http://test.com";
     final Token token = Token.fromUrl(url);
@@ -43,6 +40,9 @@ public class CassandraTtlReactiveTokenRepositoryTests {
                 .insert(any(Token.class), any(InsertOptions.class))
         ).willReturn(Mono.just(mock(WriteResult.class)));
 
+        cassandraTtlReactiveTokenRepository =
+                new CassandraTtlReactiveTokenRepository(reactiveCassandraOperations, reactiveTokenRepository);
+
         Token resultToken = cassandraTtlReactiveTokenRepository.saveWithTtl(token, 30).block();
 
         assertThat(resultToken).isNotNull();
@@ -52,6 +52,9 @@ public class CassandraTtlReactiveTokenRepositoryTests {
 
     @Test
     public void saveWithTtlRequiresValidArgumentsTest() {
+        cassandraTtlReactiveTokenRepository =
+                new CassandraTtlReactiveTokenRepository(reactiveCassandraOperations, reactiveTokenRepository);
+
         assertThatIllegalArgumentException().isThrownBy(() -> cassandraTtlReactiveTokenRepository.saveWithTtl(null, 10));
         assertThatIllegalArgumentException().isThrownBy(() -> cassandraTtlReactiveTokenRepository.saveWithTtl(null, null));
         assertThatIllegalArgumentException().isThrownBy(() -> cassandraTtlReactiveTokenRepository.saveWithTtl(token, null));

@@ -17,11 +17,16 @@ import java.util.UUID;
 @Repository
 public class CassandraTtlReactiveTokenRepository implements TtlReactiveTokenRepository {
 
-    @Autowired
     private ReactiveCassandraOperations reactiveCassandraOperations;
+    private ReactiveTokenRepository reactiveTokenRepository;
 
     @Autowired
-    ReactiveTokenRepository reactiveTokenRepository;
+    public CassandraTtlReactiveTokenRepository(ReactiveCassandraOperations reactiveCassandraOperations,
+                                               ReactiveTokenRepository reactiveTokenRepository) {
+        this.reactiveCassandraOperations = reactiveCassandraOperations;
+        this.reactiveTokenRepository = reactiveTokenRepository;
+
+    }
 
     @Override
     public <S extends Token> Mono<S> saveWithTtl(S entity, Integer ttl) {

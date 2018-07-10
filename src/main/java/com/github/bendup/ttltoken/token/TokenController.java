@@ -27,10 +27,10 @@ public class TokenController {
     private Integer ttl;
 
     @PostMapping("/generateToken")
-    public Mono<UUID> createToken(@RequestParam("url") String url) {
+    public Mono<String> createToken(@RequestParam("url") String url) {
         return tokenRepository
                 .saveWithTtl(Token.fromUrl(url), ttl)
-                .map(savedToken -> savedToken.getId());
+                .map(savedToken -> savedToken.getId().toString());
     }
 
     @GetMapping("/token/{id}")

@@ -43,7 +43,7 @@ public class TokenControllerTests {
                 )
                 .exchange()
                 .expectStatus().isOk()
-                .returnResult(UUID.class)
+                .returnResult(String.class)
                 .getResponseBody()
                 .blockFirst()
                 .toString();
